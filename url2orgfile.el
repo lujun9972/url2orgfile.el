@@ -1,4 +1,4 @@
-;;; url2orgfile.el --- Convert html to org format text   -*- lexical-binding: t; -*-
+;;; url2orgfile.el --- Retrive URL and save content as org-file  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2017-2018 DarkSun
 
