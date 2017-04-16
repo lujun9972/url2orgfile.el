@@ -40,18 +40,18 @@
   "Save http(s) page as org file")
 
 (defcustom url2orgfile-store-dir "/home/lujun9972/github/emacs-document/raw/"
-  "The directory to store org files"
+  "The directory to store org files."
   :type 'directory)
 
 (defcustom url2orgfile-timeout 30
-  "Timeout seconds"
+  "Timeout seconds."
   :type 'number)
 
 (defun url2orgfile-get-dom (url)
   "Retrive `URL' and return the dom."
   (let ((buf (with-timeout
                  (url2orgfile-timeout
-                  (error "fetch %s failed in %d seconds" url url2orgfile-timeout))
+                  (error "Fetch %s failed in %d seconds" url url2orgfile-timeout))
                (url-retrieve-synchronously url))))
     (prog1 (ignore-errors
              (with-current-buffer buf
@@ -60,7 +60,8 @@
       (kill-buffer buf))))
 
 (defun url2orgfile-save-dom (dom org-file &rest option-plist)
-  "Write the DOM into ORG-FILE using org-mode format."
+  "Write the DOM into ORG-FILE using ‘org-mode’ format.
+OPTION-PLIST specify additional in-buffer settings."
   (with-temp-file org-file
     (while option-plist
       (let ((option (format "%s" (pop option-plist)))
@@ -72,28 +73,30 @@
 
 ;;;###autoload
 (defun url2orgfile (&optional url org-file &rest option-plist)
-  "Retrive URL and write the content into ORG-FILE using org-mode format.
+  "Retrive URL and write the content into ORG-FILE using ‘org-mode’ format.
 
-This function will return the saved ORG-FILE path"
+This function will return the saved ORG-FILE path
+OPTION-PLIST specify additional in-buffer settings."
   (interactive)
   (let* ((url (or url (read-string "url: ")))
          (dom (url2orgfile-get-dom url))
          (title (dom-text (dom-by-tag dom 'title)))
          (org-file (or org-file (expand-file-name (concat title ".org") url2orgfile-store-dir))))
-    (apply #'url2orgfile-save-dom dom org-file option-plist) 
+    (apply #'url2orgfile-save-dom dom org-file option-plist)
     org-file))
 
 (defun url2orgfile-asynchronously  (&optional url org-file &rest option-plist)
-  "Retrive URL asynchronously and write the content into ORG-FILE using org-mode format when finished. "
+  "Retrive URL asynchronously and save the content as ORG-FILE when finished.
+OPTION-PLIST specify additional in-buffer settings."
   (interactive)
   (let ((url (or url (read-string "url: "))))
-    (with-timeout (url2orgfile-timeout (error "fetch %s failed in %d seconds" url url2orgfile-timeout))
+    (with-timeout (url2orgfile-timeout (error "Fetch %s failed in %d seconds" url url2orgfile-timeout))
       (url-retrieve url (lambda (status)
                           (goto-char url-http-end-of-headers)
                           (let* ((dom (libxml-parse-html-region (point) (point-max)))
                                  (title (dom-text (dom-by-tag dom 'title)))
                                  (org-file (or org-file (expand-file-name (concat title ".org") url2orgfile-store-dir))))
-                            (apply #'url2orgfile-save-dom dom org-file option-plist) 
+                            (apply #'url2orgfile-save-dom dom org-file option-plist)
                             (message "%s saved to %s" url org-file)))))))
 
 (provide 'url2orgfile)
