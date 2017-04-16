@@ -3,7 +3,8 @@
 ;; Copyright (C) 2017-2018 DarkSun
 
 ;; Author: DarkSun <lujun9972@gmail.com>
-;; Created: 2017-4-10
+;; URL: http://github.com/lujun9972/url2orgfile.el
+;; Created: 2017-4-15
 ;; Version: 0.1
 ;; Keywords: convenience, html, org
 ;; Package-Requires: ((emacs "24.4"))
