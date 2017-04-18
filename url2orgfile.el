@@ -79,7 +79,8 @@ OPTION-PLIST specify additional in-buffer settings."
 This function will return the saved ORG-FILE path
 OPTION-PLIST specify additional in-buffer settings."
   (interactive)
-  (let* ((url (or url (read-string "url: ")))
+  (let* ((option-plist (append (list :TITLE title) option-plist))
+         (url (or url (read-string "url: ")))
          (dom (url2orgfile-get-dom url))
          (title (dom-text (dom-by-tag dom 'title)))
          (org-file (or org-file (expand-file-name (concat title ".org") url2orgfile-store-dir))))
@@ -90,7 +91,8 @@ OPTION-PLIST specify additional in-buffer settings."
   "Retrive URL asynchronously and save the content as ORG-FILE when finished.
 OPTION-PLIST specify additional in-buffer settings."
   (interactive)
-  (let ((url (or url (read-string "url: "))))
+  (let ((option-plist (append (list :TITLE title) option-plist))
+        (url (or url (read-string "url: "))))
     (with-timeout (url2orgfile-timeout (error "Fetch %s failed in %d seconds" url url2orgfile-timeout))
       (url-retrieve url (lambda (status)
                           (goto-char url-http-end-of-headers)
