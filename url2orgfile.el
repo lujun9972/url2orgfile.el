@@ -7,7 +7,7 @@
 ;; Created: 2017-4-15
 ;; Version: 0.1
 ;; Keywords: convenience, html, org
-;; Package-Requires: ((emacs "24.4"))
+;; Package-Requires: ((emacs "24.4")(html2org "0.1")
 
 ;; This file is NOT part of GNU Emacs.
 
@@ -41,7 +41,7 @@
   "Save http(s) page as org file")
 
 (defcustom url2orgfile-store-dir "/home/lujun9972/github/emacs-document/raw/"
-  "The directory to store org files."
+  "The default directory storing org files."
   :type 'directory)
 
 (defcustom url2orgfile-timeout 30
@@ -84,7 +84,7 @@ OPTION-PLIST specify additional in-buffer settings."
          (dom (url2orgfile-get-dom url))
          (title (dom-text (dom-by-tag dom 'title)))
          (org-file (or org-file (expand-file-name (concat title ".org") url2orgfile-store-dir))))
-    (apply #'url2orgfile-save-dom dom org-file option-plist)
+    (apply #'url2orgfile-save-dom dom org-file "TITLE" title option-plist)
     org-file))
 
 (defun url2orgfile-asynchronously  (&optional url org-file &rest option-plist)
@@ -99,7 +99,7 @@ OPTION-PLIST specify additional in-buffer settings."
                           (let* ((dom (libxml-parse-html-region (point) (point-max)))
                                  (title (dom-text (dom-by-tag dom 'title)))
                                  (org-file (or org-file (expand-file-name (concat title ".org") url2orgfile-store-dir))))
-                            (apply #'url2orgfile-save-dom dom org-file option-plist)
+                            (apply #'url2orgfile-save-dom dom org-file "TITLE" title option-plist)
                             (message "%s saved to %s" url org-file)))))))
 
 (provide 'url2orgfile)
